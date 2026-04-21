@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solution Atelier - IA Auto</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="logo">Rayan<span> MOHAMED</span> Démo</a>
+        <nav>
+            <ul>
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="atelier.html" class="active">Garage</a></li>
+                <li><a href="commerce.html">Concessionnare</a></li>
+            </ul>
+        </nav>
+        <a href="mailto:rayan.mohamedpro@hotmail.com" class="btn-cta">Me Contacter</a>
+    </header>
+
+    <section class="container">
+        <h1>Automatisez votre SAV</h1>
+        <p>Votre standard est saturé ? L'IA répond, qualifie la panne et prend le RDV dans votre agenda.</p>
+
+        <div class="grid-2">
+            <div class="feature-text">
+                <ul style="list-style: none; text-align: left; color: var(--text-muted);">
+                    <li style="margin-bottom: 15px;">✅ <strong>Prise de RDV 24/7 :</strong> Synchronisé avec votre DMS.</li>
+                    <li style="margin-bottom: 15px;">✅ <strong>Filtrage Intelligent :</strong> Distingue une vidange d'une panne moteur.</li>
+                    <li style="margin-bottom: 15px;">✅ <strong>Réponses Prix :</strong> Donne le forfait révision instantanément.</li>
+                </ul>
+                <br>
+                <a href="#" class="btn-cta">Tester l'IA Atelier (en bas à droite)</a>
+            </div>
+
+            <div class="card">
+                <h3 style="color:white; margin-bottom:20px;">Exemple de conversation :</h3>
+                <div class="chat-bubble">Bonjour, je dois faire la révision des 60 000 km.</div>
+                <div class="chat-bubble bot">Bonjour ! C'est noté. Quel est le modèle de votre véhicule et son immatriculation ?</div>
+                <div class="chat-bubble">Clio 5, AA-123-BB.</div>
+                <div class="chat-bubble bot">Parfait. J'ai un créneau disponible ce jeudi à 14h00 pour 1h30 d'intervention. Je valide ?</div>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        /* Design du bouton flottant */
+        .chatbot-toggler {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            height: 60px;
+            width: 60px;
+            color: #fff;
+            background: #3b82f6; /* Bleu primaire */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 15px rgba(0,0,0,0.4);
+            z-index: 9999;
+            border: none;
+            font-size: 28px;
+        }
+        .chatbot-toggler:hover { background: #2563eb; transform: scale(1.1); }
+
+        /* Design de la fenêtre de chat */
+        .chatbot-window {
+            position: fixed;
+            right: 35px;
+            bottom: 100px;
+            width: 350px;
+            height: 450px;
+            background: #1e293b; /* Gris foncé carte */
+            border-radius: 15px;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.5);
+            overflow: hidden;
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.5);
+            transform-origin: bottom right;
+            transition: all 0.3s ease;
+            z-index: 9998;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Quand le chat est ouvert */
+        .show-chatbot .chatbot-window {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1);
+        }
+
+        /* Header du chat */
+        .chat-header {
+            background: #3b82f6;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: white;
+        }
+        .chat-header h3 { font-size: 1rem; font-weight: 600; margin: 0; }
+        .chat-header span { font-size: 0.8rem; opacity: 0.8; }
+
+        /* Corps du chat */
+        .chat-body {
+            padding: 20px;
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .message {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        .message.bot {
+            background: #334155;
+            color: #f8fafc;
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+        }
+        .message.user {
+            background: #3b82f6;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+
+        /* Zone de saisie (footer) */
+        .chat-input {
+            padding: 15px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            gap: 10px;
+            background: #0f172a;
+        }
+        .chat-input input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            outline: none;
+        }
+        .chat-input button {
+            background: transparent;
+            border: none;
+            color: #3b82f6;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+
+
+    <div id="chatbot-container">
+        <button id="chatbot-toggle">💬</button>
+
+        <div id="chatbot-window">
+            <div class="chat-header">
+                <span>Garage Auto</span>
+                <span id="chatbot-close">✕</span>
+            </div>
+            
+            <div id="chatbot-messages">
+                <div class="message bot-message">
+                    Bonjour ! Bienvenue au garage. Je peux prendre votre rendez-vous ou vérifier nos disponibilités.
+                </div>
+            </div>
+
+            <div class="chat-input-area">
+                <input type="text" id="chatbot-input" placeholder="Écrivez votre message...">
+                <button id="chatbot-send">➤</button>
+            </div>
+            <div style="text-align: center; padding: 8px 0; background-color: #f8fafc; border-top: 1px solid #e5e7eb; border-radius: 0 0 12px 12px;">
+                <a href="https://volyia.vercel.app" target="_blank" style="text-decoration: none; color: #94a3b8; font-size: 11px; font-family: sans-serif; display: flex; align-items: center; justify-content: center; gap: 4px; transition: color 0.2s;">
+                    Propulsé par <span style="color: #2563eb; font-weight: 700;">VOLY</span> ⚡
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ⬇️⬇️ COLLE TON LIEN N8N ICI ⬇️⬇️
+        const WEBHOOK_URL = "https://n8n.srv1357964.hstgr.cloud/webhook/garage-chat"; 
+
+        // -- Ne touche pas à la suite --
+        let sessionId = localStorage.getItem('chat_session_id');
+        if (!sessionId) {
+            sessionId = "user-" + Math.random().toString(36).substring(2, 9);
+            localStorage.setItem('chat_session_id', sessionId);
+        }
+
+        const toggleBtn = document.getElementById('chatbot-toggle');
+        const closeBtn = document.getElementById('chatbot-close');
+        const chatWindow = document.getElementById('chatbot-window');
+        const messagesDiv = document.getElementById('chatbot-messages');
+        const inputField = document.getElementById('chatbot-input');
+        const sendBtn = document.getElementById('chatbot-send');
+
+        // Fonction globale pour ouvrir le chat depuis les boutons du site
+        window.openChat = function() {
+            chatWindow.style.display = 'flex';
+            inputField.focus();
+        }
+
+        toggleBtn.addEventListener('click', () => {
+            const isHidden = chatWindow.style.display === 'none' || chatWindow.style.display === '';
+            chatWindow.style.display = isHidden ? 'flex' : 'none';
+            if(isHidden) inputField.focus();
+        });
+
+        closeBtn.addEventListener('click', () => chatWindow.style.display = 'none');
+
+        function addMessage(text, isUser) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = isUser ? 'message user-message' : 'message bot-message';
+            msgDiv.innerText = text;
+            messagesDiv.appendChild(msgDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const text = inputField.value.trim();
+            if (!text) return;
+
+            addMessage(text, true);
+            inputField.value = "";
+
+            // Loading indicator
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'message bot-loading';
+            loadingDiv.innerText = "• • •";
+            loadingDiv.id = "bot-loading";
+            messagesDiv.appendChild(loadingDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+            try {
+                const response = await fetch(WEBHOOK_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ chatInput: text, sessionId: sessionId })
+                });
+                
+                const data = await response.json();
+                if(document.getElementById("bot-loading")) document.getElementById("bot-loading").remove();
+                
+                const botResponse = data.output || data.text || JSON.stringify(data);
+                addMessage(botResponse, false);
+
+            } catch (error) {
+                if(document.getElementById("bot-loading")) document.getElementById("bot-loading").remove();
+                addMessage("Erreur de connexion 😓", false);
+            }
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        inputField.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+    </script>
+
+    </body>
+</html>
